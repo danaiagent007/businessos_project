@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import {
   Blocks, ChartNoAxesCombined, CircleHelp, FileText, LayoutDashboard,
   ListTodo, MessageSquare, Settings2, Sparkles, Users, Users2, Workflow,
-  ArrowUpRight, ArrowRight, ChevronDown, GitBranch, Brain,
+  ArrowUpRight, ArrowRight, ChevronDown, GitBranch, Brain, Phone,
 } from 'lucide-react'
 import {
   useAuth, useUser,
@@ -84,6 +84,14 @@ export function Sidebar() {
       >
         <Brain size={18} />Knowledge Base
         <span style={{ marginLeft: 'auto', fontSize: 9, background: 'linear-gradient(135deg,#7450d7,#9b6bff)', color: 'white', borderRadius: 99, padding: '2px 6px', fontWeight: 700 }}>AI</span>
+      </Link>
+      <Link
+        to="/calls"
+        className={cn('nav-item', location.pathname === '/calls' && 'nav-active')}
+        onClick={close}
+      >
+        <Phone size={18} />AI Calls
+        <span style={{ marginLeft: 'auto', fontSize: 9, background: 'linear-gradient(135deg,#7450d7,#9b6bff)', color: 'white', borderRadius: 99, padding: '2px 6px', fontWeight: 700 }}>NEW</span>
       </Link>
       <Link
         to="/integrations"

@@ -64,5 +64,12 @@ export function useApiClient() {
       approve: (msgId: string, content?: string) => request<{ ok: boolean }>(`/api/conversations/messages/${msgId}/approve`, { method: 'POST', body: JSON.stringify({ content }) }, token),
       reject:  (msgId: string) => request<{ ok: boolean }>(`/api/conversations/messages/${msgId}/reject`, { method: 'POST', body: JSON.stringify({}) }, token),
     },
+    calls: {
+      createSession: () => request<{ sessionId: string }>('/api/calls/session', { method: 'POST', body: JSON.stringify({}) }, token),
+      endSession:    (id: string) => request<{ ok: boolean }>(`/api/calls/session/${id}/end`, { method: 'POST', body: JSON.stringify({}) }, token),
+      list:          () => request<{ sessions: unknown[] }>('/api/calls', {}, token),
+      get:           (id: string) => request<{ session: unknown }>(`/api/calls/${id}`, {}, token),
+      delete:        (id: string) => request<{ ok: boolean }>(`/api/calls/${id}`, { method: 'DELETE' }, token),
+    },
   }
 }

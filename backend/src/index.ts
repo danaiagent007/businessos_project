@@ -14,6 +14,8 @@ import { customersRouter } from './modules/customers/customers.routes.js'
 import { kbRouter } from './modules/kb/kb.routes.js'
 import { webhookRouter } from './modules/whatsapp/whatsapp.routes.js'
 import { conversationsRouter } from './modules/conversations/conversations.routes.js'
+import { callsRouter } from './modules/calls/calls.routes.js'
+import { attachVoiceWebSocket } from './modules/calls/call.ws.js'
 
 // ─── App setup ────────────────────────────────────────────────────────────────
 const app = express()
@@ -46,6 +48,7 @@ app.use('/api/customers', customersRouter)
 app.use('/api/kb', kbRouter)
 app.use('/api/webhooks', webhookRouter)
 app.use('/api/conversations', conversationsRouter)
+app.use('/api/calls', callsRouter)
 
 // ─── 404 + Error handlers ────────────────────────────────────────────────────
 app.use(notFound)
@@ -54,6 +57,7 @@ app.use(errorHandler)
 // ─── Start ───────────────────────────────────────────────────────────────────
 mongoose.connect(config.mongodb.uri).then(() => {
   logger.info('📦 Connected to MongoDB')
+  attachVoiceWebSocket(httpServer)
   httpServer.listen(config.port, () => {
     logger.info(`🚀 Backend running on http://localhost:${config.port}`)
     logger.info(`   Environment: ${config.nodeEnv}`)

@@ -16,6 +16,7 @@ import {
   SettingsPage,
 } from '@/pages/dashboard/Inbox'
 import { LoginPage } from '@/pages/Login'
+import VoiceDemo from '@/pages/dashboard/VoiceDemo'
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="integrations" element={<IntegrationsPage />} />
         <Route path="settings"     element={<SettingsPage />} />
         <Route path="knowledge"    element={<KnowledgePage />} />
+        <Route path="calls"        element={<VoiceDemo />} />
       </Route>
     </Routes>
   )
