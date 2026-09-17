@@ -15,12 +15,21 @@ const clients = new Map<WebSocket, VoiceClient>()
 
 /**
  * Attach WebSocket server to the HTTP server.
- * Frontend connects to ws://host/ws/voice?sessionId=xxx&orgId=xxx
+ * Frontend connects to ws://host/ws/voice?sessionId=...&orgId=...
  */
 export function attachVoiceWebSocket(httpServer: Server): void {
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws/voice' })
+  const wss = new WebSocketServer({ noServer: true })
 
-  wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+  httpServer.on('upgrade', (request: IncomingMessage, socket, head) => {
+    const url = new URL(request.url || '', `http://${request.headers.host}`)
+    if (url.pathname === '/ws/voice') {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request)
+      })
+    }
+  })
+
+  wss.on('connection', async (ws: WebSocket, req: IncomingMessage) => {
     const url = new URL(req.url || '', 'http://localhost')
     const sessionId = url.searchParams.get('sessionId') || ''
     const organizationId = url.searchParams.get('orgId') || ''
