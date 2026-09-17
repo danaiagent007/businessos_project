@@ -6,7 +6,7 @@ import type { AIProvider, CompletionOptions } from '../ai.provider.js'
  * Gemini models — updated list (gemini-2.0-flash deprecated Sept 2026).
  */
 const MODELS = [
-  'gemini-1.5-flash',           // Most stable free model — use this first
+  'gemini-1.5-flash-latest',           // Most stable free model — use this first
   'gemini-3.6-flash',           // Newer naming (as of Sept 2026)
   'gemini-2.5-flash-preview-04-17', // Experimental
   'gemini-1.5-flash-8b',        // Smallest — ultra-fast fallback
