@@ -8,8 +8,9 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
 
   // Intercept upgrade requests for our specific path
   httpServer.on('upgrade', (request: IncomingMessage, socket, head) => {
-    const url = new URL(request.url || '', `http://${request.headers.host}`)
-    if (url.pathname === '/api/retell/llm-ws') {
+    const url = new URL(request.url || '', `http://${request.headers.host || 'localhost'}`)
+    // Retell appends the call_id to the URL: /api/retell/llm-ws/<call_id>
+    if (url.pathname.startsWith('/api/retell/llm-ws')) {
       wss.handleUpgrade(request, socket, head, (ws) => {
         wss.emit('connection', ws, request)
       })
