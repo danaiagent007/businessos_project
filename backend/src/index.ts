@@ -18,6 +18,8 @@ import { callsRouter } from './modules/calls/calls.routes.js'
 import { retellRouter } from './modules/calls/retell.routes.js'
 import { attachVoiceWebSocket } from './modules/calls/call.ws.js'
 
+import { attachRetellLLMWebSocket } from './modules/calls/retell-llm.ws.js'
+
 // ─── App setup ────────────────────────────────────────────────────────────────
 const app = express()
 const httpServer = createServer(app)
@@ -61,6 +63,7 @@ app.use(errorHandler)
 mongoose.connect(config.mongodb.uri).then(() => {
   logger.info('📦 Connected to MongoDB')
   attachVoiceWebSocket(httpServer)
+  attachRetellLLMWebSocket(httpServer)
   httpServer.listen(config.port, () => {
     logger.info(`🚀 Backend running on http://localhost:${config.port}`)
     logger.info(`   Environment: ${config.nodeEnv}`)
