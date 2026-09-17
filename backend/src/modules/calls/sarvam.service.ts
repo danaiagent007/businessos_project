@@ -56,12 +56,13 @@ export async function speechToText(
 // ─── Text → Speech ───────────────────────────────────────────────────────────
 
 export type SarvamSpeaker =
-  | 'meera'    // Female, Hindi/English
-  | 'pavithra' // Female, Tamil
-  | 'maitreyi' // Female, Marathi
-  | 'arvind'   // Male, Hindi
-  | 'amol'     // Male, Marathi
-  | 'arjun'    // Male, Hindi/English
+  | 'anushka'   // Female, Indian English
+  | 'manisha'   // Female, Hindi
+  | 'vidya'     // Female, South Indian
+  | 'arya'      // Female, neutral
+  | 'abhilash'  // Male
+  | 'karun'     // Male
+  | 'hitesh'    // Male
 
 export interface TTSResult {
   /** Base64-encoded WAV audio */
@@ -77,7 +78,7 @@ export interface TTSResult {
 export async function textToSpeech(
   text: string,
   languageCode = 'en-IN',
-  speaker: SarvamSpeaker = 'meera'
+  speaker: SarvamSpeaker = 'anushka'
 ): Promise<TTSResult> {
   const res = await fetch(`${SARVAM_BASE}/text-to-speech`, {
     method: 'POST',
