@@ -90,7 +90,7 @@ export async function textToSpeech(
       inputs: [text],
       target_language_code: languageCode,
       speaker,
-      model: 'bulbul:v2',
+      model: 'bulbul:v3',
       enable_preprocessing: true,
     }),
   })

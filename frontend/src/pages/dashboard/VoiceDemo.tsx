@@ -307,7 +307,7 @@ export default function VoiceDemo() {
         )}
 
         <p className="text-center text-xs text-slate-600 mt-8">
-          STT: Sarvam Saarika v2 · LLM: Groq · TTS: Sarvam Bulbul v2
+          STT: Sarvam Saaras v3 · LLM: Groq · TTS: Sarvam Bulbul v3
         </p>
       </div>
     </div>
