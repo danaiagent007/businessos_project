@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from 'ws'
 import { Server, IncomingMessage } from 'http'
 import { logger } from '../../common/logger.js'
 import { CallSession } from './call.model.js'
+import { kbService } from '../kb/kb.service.js'
 
 export function attachRetellLLMWebSocket(httpServer: Server): void {
   const wss = new WebSocketServer({ noServer: true })
@@ -17,10 +18,26 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
     }
   })
 
-  wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+  wss.on('connection', async (ws: WebSocket, req: IncomingMessage) => {
     const url = new URL(req.url || '', `http://${req.headers.host}`)
     const orgId = url.searchParams.get('orgId') || ''
     logger.info({ orgId }, '[Retell WS] Custom LLM connection opened')
+
+    let systemPrompt = 'You are a helpful AI voice assistant for a business. Keep responses short and conversational (1-2 sentences).'
+    if (orgId) {
+      try {
+        const kbText = await kbService.getKnowledgeBaseText(orgId)
+        if (kbText) {
+          systemPrompt = `You are a helpful AI voice assistant for a business.
+Keep responses short and conversational (1-2 sentences) for a voice interface.
+Use the following knowledge base to answer questions:
+
+${kbText}`
+        }
+      } catch (e) {
+        logger.error({ err: e }, '[Retell WS] Failed to load KB')
+      }
+    }
 
     let callId = 'unknown'
 
@@ -66,7 +83,7 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
           }
 
           const groqMessages = [
-            { role: 'system', content: 'You are a helpful AI voice assistant for a business. Keep responses short and conversational (1-2 sentences).' },
+            { role: 'system', content: systemPrompt },
             ...messages
               .filter((m: any) => m.role === 'user' || m.role === 'assistant')
               .slice(-10)
