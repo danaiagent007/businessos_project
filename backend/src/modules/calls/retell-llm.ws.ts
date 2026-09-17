@@ -81,7 +81,7 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'llama-3.1-8b-instant',
+              model: 'openai/gpt-oss-120b',
               messages: groqMessages,
               max_tokens: 120,
               temperature: 0.5,

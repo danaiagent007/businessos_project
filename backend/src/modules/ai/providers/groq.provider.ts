@@ -7,7 +7,7 @@ import type { AIProvider, CompletionOptions } from '../ai.provider.js'
  * Use standard model names from https://console.groq.com/docs/models
  */
 const MODELS = [
-  'llama-3.1-8b-instant',      // Widely available, fast
+  'openai/gpt-oss-120b',       // Working model for this API key
   'llama3-70b-8192',           // 70B — widely available on all keys
   'llama-3.3-70b-versatile',   // New 70B model
   'mixtral-8x7b-32768',        // 8×7B — 32k context
