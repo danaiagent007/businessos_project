@@ -7,7 +7,7 @@ import type { AIProvider, CompletionOptions } from '../ai.provider.js'
  * Use standard model names from https://console.groq.com/docs/models
  */
 const MODELS = [
-  'llama-3.3-70b-versatile',   // Best reliable fast model
+  'groq/compound',             // Valid model for this specific key
   'llama3-70b-8192',           // 70B — widely available on all keys
   'llama-3.1-8b-instant',      // 8B — ultra-fast, always available
   'mixtral-8x7b-32768',        // 8×7B — 32k context

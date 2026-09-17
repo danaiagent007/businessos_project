@@ -78,7 +78,7 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'llama-3.3-70b-versatile',
+              model: 'groq/compound',
               messages: groqMessages,
               max_tokens: 120,
               temperature: 0.5,
