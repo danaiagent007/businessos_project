@@ -15,6 +15,7 @@ import { kbRouter } from './modules/kb/kb.routes.js'
 import { webhookRouter } from './modules/whatsapp/whatsapp.routes.js'
 import { conversationsRouter } from './modules/conversations/conversations.routes.js'
 import { callsRouter } from './modules/calls/calls.routes.js'
+import { retellRouter } from './modules/calls/retell.routes.js'
 import { attachVoiceWebSocket } from './modules/calls/call.ws.js'
 
 // ─── App setup ────────────────────────────────────────────────────────────────
@@ -49,6 +50,8 @@ app.use('/api/kb', kbRouter)
 app.use('/api/webhooks', webhookRouter)
 app.use('/api/conversations', conversationsRouter)
 app.use('/api/calls', callsRouter)
+// Retell endpoints — NO Clerk auth (Retell calls them directly)
+app.use('/api/retell', retellRouter)
 
 // ─── 404 + Error handlers ────────────────────────────────────────────────────
 app.use(notFound)
