@@ -31,7 +31,7 @@ export async function speechToText(
 
   const form = new FormData()
   form.append('file', new Blob([audioBuffer], { type: mimeType }), filename)
-  form.append('model', 'saarika:v2')
+  form.append('model', 'saaras:v3')
   form.append('language_code', languageCode)
   form.append('with_timestamps', 'false')
 
