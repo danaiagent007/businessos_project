@@ -3,6 +3,14 @@ import { Server, IncomingMessage } from 'http'
 import { logger } from '../../common/logger.js'
 import { CallSession } from './call.model.js'
 import { kbService } from '../kb/kb.service.js'
+import { KeyPool } from '../ai/key-pool.js'
+
+let globalGroqPool: KeyPool | null = null
+try {
+  globalGroqPool = new KeyPool(process.env.GROQ_API_KEYS || '')
+} catch (e) {
+  logger.warn('[Retell WS] No GROQ_API_KEYS found for KeyPool')
+}
 
 export function attachRetellLLMWebSocket(httpServer: Server): void {
   const wss = new WebSocketServer({ noServer: true })
@@ -65,8 +73,8 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
              return
           }
 
-          // Call Groq (using same logic as before)
-          const groqKey = (process.env.GROQ_API_KEYS || '').split(',')[0].trim()
+          // Call Groq using a cycled key from KeyPool to prevent 429 rate limit
+          const groqKey = globalGroqPool ? globalGroqPool.next() : ''
           if (!groqKey) {
              ws.send(JSON.stringify({
                response_id: responseId,

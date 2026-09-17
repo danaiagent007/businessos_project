@@ -3,6 +3,14 @@ import { kbService } from '../kb/kb.service.js'
 import { CallSession } from './call.model.js'
 import { logger } from '../../common/logger.js'
 import { v4 as uuidv4 } from 'uuid'
+import { KeyPool } from '../ai/key-pool.js'
+
+let globalGroqPool: KeyPool | null = null
+try {
+  globalGroqPool = new KeyPool(process.env.GROQ_API_KEYS || '')
+} catch (e) {
+  logger.warn('[Retell Routes] No GROQ_API_KEYS found for KeyPool')
+}
 
 export const retellRouter = Router()
 
@@ -72,8 +80,8 @@ retellRouter.post('/llm', async (req: Request, res: Response) => {
     // Build system prompt with KB
     const systemPrompt = buildSystemPrompt(kbContext)
 
-    // Call Groq LLM with streaming
-    const groqKey = (process.env.GROQ_API_KEYS || '').split(',')[0].trim()
+    // Call Groq LLM with streaming (using cycled key)
+    const groqKey = globalGroqPool ? globalGroqPool.next() : ''
     if (!groqKey) {
       return streamRetellResponse(res, response_id,
         "I'm sorry, I'm having trouble right now. Please try again shortly.")
