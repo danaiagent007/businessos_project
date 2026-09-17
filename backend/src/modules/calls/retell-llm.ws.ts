@@ -67,7 +67,10 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
 
           const groqMessages = [
             { role: 'system', content: 'You are a helpful AI voice assistant for a business. Keep responses short and conversational (1-2 sentences).' },
-            ...messages.filter((m: any) => m.role === 'user' || m.role === 'assistant').slice(-10)
+            ...messages
+              .filter((m: any) => m.role === 'user' || m.role === 'assistant')
+              .slice(-10)
+              .map((m: any) => ({ role: m.role, content: m.content }))
           ]
 
           // Use fetch for Groq streaming

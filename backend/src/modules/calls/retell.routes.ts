@@ -82,7 +82,10 @@ retellRouter.post('/llm', async (req: Request, res: Response) => {
     // Build messages for Groq
     const groqMessages = [
       { role: 'system', content: systemPrompt },
-      ...messages.filter(m => m.role === 'user' || m.role === 'assistant').slice(-10), // last 10 turns
+      ...messages
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .slice(-10) // last 10 turns
+        .map(m => ({ role: m.role, content: m.content }))
     ]
 
     // Call Groq with streaming
