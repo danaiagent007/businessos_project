@@ -9,8 +9,5 @@ onlyBuiltDependencies:
   - '@clerk/shared'
   - esbuild
   - msgpackr-extract
-
-allowBuilds:
-  '@clerk/shared': true
-  esbuild: true
-  msgpackr-extract: true
+  - bufferutil
+  - utf-8-validate

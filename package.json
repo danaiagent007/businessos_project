@@ -10,14 +10,5 @@
     "build": "pnpm --filter shared build && pnpm --filter backend build && pnpm --filter frontend build",
     "lint": "pnpm -r lint",
     "type-check": "pnpm -r type-check"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "bufferutil",
-      "utf-8-validate",
-      "esbuild",
-      "@clerk/shared",
-      "msgpackr-extract"
-    ]
   }
 }
