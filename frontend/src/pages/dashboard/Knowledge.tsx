@@ -6,17 +6,22 @@ import {
 } from 'lucide-react'
 import { useApiClient } from '@/lib/api'
 
-type KBCategory = 'services' | 'pricing' | 'faq' | 'hours' | 'policies' | 'locations' | 'products' | 'other'
+type KBCategory = 'services' | 'pricing' | 'faq' | 'hours' | 'policies' | 'locations' | 'products' | 'other' | 'document'
 
-interface KBEntry {
+export interface KBEntry {
   _id: string
+  type: string
   category: KBCategory
-  key: string
-  value: string
+  key?: string
+  value?: string
+  title?: string
+  content?: string
+  metadata?: any
   isActive: boolean
 }
 
 const CATEGORIES: { id: KBCategory; label: string; icon: React.ElementType; color: string; desc: string }[] = [
+  { id: 'document',  label: 'Documents', icon: Brain,       color: '#7450d7', desc: 'Paste text from PDFs or documents' },
   { id: 'pricing',   label: 'Pricing',   icon: DollarSign,  color: '#16a34a', desc: 'Service prices & packages' },
   { id: 'services',  label: 'Services',  icon: Store,       color: '#7450d7', desc: 'What you offer' },
   { id: 'faq',       label: 'FAQ',       icon: HelpCircle,  color: '#0891b2', desc: 'Common questions & answers' },
@@ -36,8 +41,8 @@ function EntryRow({ entry, onSave, onDelete }: {
   onDelete: (id: string) => Promise<void>
 }) {
   const [editing, setEditing] = useState(false)
-  const [key, setKey]         = useState(entry.key)
-  const [value, setValue]     = useState(entry.value)
+  const [key, setKey]         = useState(entry.key || '')
+  const [value, setValue]     = useState(entry.value || '')
   const [saving, setSaving]   = useState(false)
 
   async function save() {
@@ -48,7 +53,26 @@ function EntryRow({ entry, onSave, onDelete }: {
     setEditing(false)
   }
 
-  function cancel() { setKey(entry.key); setValue(entry.value); setEditing(false) }
+  function cancel() { setKey(entry.key || ''); setValue(entry.value || ''); setEditing(false) }
+
+  if (entry.type === 'text') {
+    return (
+      <tr style={{ background: entry.isActive ? 'transparent' : '#f9f9fb' }}>
+        <td style={{ padding: '9px 12px', fontSize: 13, color: '#2d2440', fontWeight: 500 }} colSpan={2}>
+          <div><strong>{entry.title || 'Document'}</strong></div>
+          <div style={{ fontSize: 11, color: '#9991a4', marginTop: 4, whiteSpace: 'pre-wrap', maxHeight: 60, overflow: 'hidden' }}>
+            {entry.content}
+          </div>
+        </td>
+        <td style={{ padding: '9px 12px', display: 'flex', gap: 6 }}>
+          <button onClick={() => onDelete(entry._id)} title="Delete"
+            style={{ background: '#fff0f0', border: 'none', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', color: '#dc2626', display: 'flex', alignItems: 'center' }}>
+            <Trash2 size={12} />
+          </button>
+        </td>
+      </tr>
+    )
+  }
 
   if (editing) {
     return (
@@ -93,18 +117,25 @@ function EntryRow({ entry, onSave, onDelete }: {
 }
 
 /** Add entry form */
-function AddEntryForm({ category, onAdd }: { category: KBCategory; onAdd: (key: string, value: string) => Promise<void> }) {
+function AddEntryForm({ category, onAdd }: { category: KBCategory; onAdd: (payload: any) => Promise<void> }) {
   const [open, setOpen]   = useState(false)
   const [key, setKey]     = useState('')
   const [value, setValue] = useState('')
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
   const [saving, setSaving] = useState(false)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (!key.trim() || !value.trim()) return
     setSaving(true)
-    await onAdd(key.trim(), value.trim())
-    setKey(''); setValue('')
+    if (category === 'document') {
+      if (!title.trim() || !content.trim()) return
+      await onAdd({ type: 'text', title: title.trim(), content: content.trim() })
+    } else {
+      if (!key.trim() || !value.trim()) return
+      await onAdd({ type: 'key-value', key: key.trim(), value: value.trim() })
+    }
+    setKey(''); setValue(''); setTitle(''); setContent('')
     setSaving(false)
     setOpen(false)
   }
@@ -112,9 +143,30 @@ function AddEntryForm({ category, onAdd }: { category: KBCategory; onAdd: (key: 
   if (!open) return (
     <button onClick={() => setOpen(true)}
       style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: '1.5px dashed #c8c4d8', background: 'transparent', color: '#9991a4', fontSize: 11, cursor: 'pointer', width: '100%', marginTop: 4 }}>
-      <Plus size={12} /> Add entry
+      <Plus size={12} /> {category === 'document' ? 'Add document text' : 'Add entry'}
     </button>
   )
+
+  if (category === 'document') {
+    return (
+      <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 6, padding: '10px 12px', background: '#f9f8ff', borderRadius: 8, border: '1.5px solid #e0dcf5' }}>
+        <input placeholder="Document Title (e.g. Return Policy)" value={title} onChange={(e) => setTitle(e.target.value)}
+          style={{ border: '1.5px solid #e0dcf5', borderRadius: 6, padding: '6px 9px', fontSize: 12, outline: 'none' }} />
+        <textarea placeholder="Paste document text here..." value={content} onChange={(e) => setContent(e.target.value)}
+          style={{ border: '1.5px solid #e0dcf5', borderRadius: 6, padding: '6px 9px', fontSize: 12, outline: 'none', minHeight: 100, fontFamily: 'inherit' }} />
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button type="submit" disabled={saving || !title.trim() || !content.trim()}
+            style={{ background: '#7450d7', color: 'white', border: 'none', borderRadius: 6, padding: '6px 14px', fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
+            {saving ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />} Save Document
+          </button>
+          <button type="button" onClick={() => setOpen(false)}
+            style={{ background: '#f0eff5', border: 'none', borderRadius: 6, padding: '6px 8px', cursor: 'pointer', color: '#9991a4' }}>
+            Cancel
+          </button>
+        </div>
+      </form>
+    )
+  }
 
   return (
     <form onSubmit={submit} style={{ display: 'flex', gap: 8, marginTop: 6, padding: '10px 12px', background: '#f9f8ff', borderRadius: 8, border: '1.5px solid #e0dcf5' }}>
@@ -122,7 +174,7 @@ function AddEntryForm({ category, onAdd }: { category: KBCategory; onAdd: (key: 
         style={{ flex: 1, border: '1.5px solid #e0dcf5', borderRadius: 6, padding: '6px 9px', fontSize: 12, outline: 'none' }} />
       <input placeholder="e.g. ₹1,000 — 90 mins" value={value} onChange={(e) => setValue(e.target.value)}
         style={{ flex: 2, border: '1.5px solid #e0dcf5', borderRadius: 6, padding: '6px 9px', fontSize: 12, outline: 'none' }} />
-      <button type="submit" disabled={saving}
+      <button type="submit" disabled={saving || !key.trim() || !value.trim()}
         style={{ background: '#7450d7', color: 'white', border: 'none', borderRadius: 6, padding: '6px 14px', fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
         {saving ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />} Add
       </button>
@@ -156,8 +208,8 @@ export function KnowledgePage() {
 
   const filtered = entries.filter((e) => e.category === activeTab)
 
-  async function handleAdd(key: string, value: string) {
-    await api.kb.create({ category: activeTab, key, value })
+  async function handleAdd(payload: any) {
+    await api.kb.create({ category: activeTab, ...payload })
     await load()
   }
 

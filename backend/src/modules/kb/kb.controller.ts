@@ -20,12 +20,32 @@ export const kbController = {
 
   async create(req: Request, res: Response) {
     try {
-      const { category, key, value } = req.body
-      if (!category || !key || !value) {
-        res.status(400).json({ error: 'category, key and value are required.' })
+      const { category, type, key, value, title, content, metadata } = req.body
+      if (!category) {
+        res.status(400).json({ error: 'category is required.' })
         return
       }
-      const entry = await getSvc(req).create({ category, key, value }, req.tenant!.userId)
+      const entryType = type || 'key-value'
+      if (entryType === 'key-value' && (!key || !value)) {
+         res.status(400).json({ error: 'key and value are required for key-value type.' })
+         return
+      }
+      if (entryType !== 'key-value' && !content) {
+         res.status(400).json({ error: 'content is required for document types.' })
+         return
+      }
+      
+      const payload: any = { category, type: entryType }
+      if (entryType === 'key-value') {
+        payload.key = key
+        payload.value = value
+      } else {
+        payload.title = title
+        payload.content = content
+        payload.metadata = metadata
+      }
+
+      const entry = await getSvc(req).create(payload, req.tenant!.userId)
       res.status(201).json({ entry })
     } catch (error) { handleError(res, error) }
   },

@@ -9,13 +9,19 @@ const { model, models } = mongoose
 const kbSchema = new Schema(
   {
     organizationId: { type: String, required: true, immutable: true },
+    type: { type: String, enum: ['key-value', 'text', 'url', 'pdf'], default: 'key-value' },
     category: {
       type: String,
       required: true,
-      enum: ['services', 'pricing', 'faq', 'hours', 'policies', 'locations', 'products', 'other'],
+      enum: ['services', 'pricing', 'faq', 'hours', 'policies', 'locations', 'products', 'other', 'document'],
     },
-    key:   { type: String, required: true },   // e.g. "haircut+facial price"
-    value: { type: String, required: true },   // e.g. "₹1,000 — 90 mins"
+    // For 'key-value' type
+    key:   { type: String },   
+    value: { type: String },   
+    // For 'text', 'url', 'pdf' types
+    title: { type: String },
+    content: { type: String }, // the extracted text content
+    metadata: { type: Schema.Types.Mixed }, // e.g. source url, file path, chunk index
     isActive: { type: Boolean, default: true },
     createdBy: { type: String, required: true },
   },

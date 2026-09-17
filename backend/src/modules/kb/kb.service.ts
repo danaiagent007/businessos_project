@@ -2,14 +2,20 @@ import { KBModel } from './kb.model.js'
 
 export type KBCategory =
   | 'services' | 'pricing' | 'faq' | 'hours'
-  | 'policies' | 'locations' | 'products' | 'other'
+  | 'policies' | 'locations' | 'products' | 'other' | 'document'
+
+export type KBType = 'key-value' | 'text' | 'url' | 'pdf'
 
 export interface KBEntry {
   _id: string
   organizationId: string
+  type: KBType
   category: KBCategory
-  key: string
-  value: string
+  key?: string
+  value?: string
+  title?: string
+  content?: string
+  metadata?: any
   isActive: boolean
   createdBy: string
   createdAt: string
@@ -36,7 +42,13 @@ export function kbService(orgId: string) {
       const grouped: Record<string, string[]> = {}
       for (const e of entries) {
         if (!grouped[e.category]) grouped[e.category] = []
-        grouped[e.category].push(`  • ${e.key}: ${e.value}`)
+        
+        if (e.type === 'key-value') {
+          grouped[e.category].push(`  • ${e.key}: ${e.value}`)
+        } else if (e.content) {
+          const titleStr = e.title ? `[${e.title}] ` : ''
+          grouped[e.category].push(`\n--- Document: ${titleStr}---\n${e.content}\n---`)
+        }
       }
 
       const lines: string[] = ['=== Business Knowledge ===']
@@ -47,12 +59,12 @@ export function kbService(orgId: string) {
       return lines.join('\n')
     },
 
-    async create(data: { category: KBCategory; key: string; value: string }, userId: string): Promise<KBEntry> {
+    async create(data: Partial<KBEntry>, userId: string): Promise<KBEntry> {
       const entry = await KBModel.create({ ...data, organizationId: orgId, createdBy: userId })
       return entry.toObject()
     },
 
-    async update(id: string, data: Partial<{ key: string; value: string; isActive: boolean }>): Promise<KBEntry | null> {
+    async update(id: string, data: Partial<KBEntry>): Promise<KBEntry | null> {
       return KBModel.findOneAndUpdate({ _id: id, organizationId: orgId }, data, { new: true }).lean()
     },
 
