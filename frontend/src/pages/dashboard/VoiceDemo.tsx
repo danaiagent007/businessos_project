@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useOrganization } from '@clerk/clerk-react'
 import { Phone, PhoneOff, Mic, MicOff, Loader2, Volume2 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useApiClient } from '@/lib/api'
 
 type CallState = 'idle' | 'connecting' | 'active' | 'processing' | 'ended'
