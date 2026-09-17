@@ -5,9 +5,9 @@ packages:
 
 pmOnFail: ignore
 
-onlyBuiltDependencies:
-  - '@clerk/shared'
-  - esbuild
-  - msgpackr-extract
-  - bufferutil
-  - utf-8-validate
+allowBuilds:
+  '@clerk/shared': true
+  'esbuild': true
+  'msgpackr-extract': true
+  'bufferutil': true
+  'utf-8-validate': true
