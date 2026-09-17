@@ -1,0 +1,16 @@
+packages:
+  - 'frontend'
+  - 'backend'
+  - 'shared'
+
+pmOnFail: ignore
+
+onlyBuiltDependencies:
+  - '@clerk/shared'
+  - esbuild
+  - msgpackr-extract
+
+allowBuilds:
+  '@clerk/shared': true
+  esbuild: true
+  msgpackr-extract: true
