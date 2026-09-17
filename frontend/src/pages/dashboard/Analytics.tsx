@@ -110,7 +110,7 @@ export function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0eef8" />
                   <XAxis dataKey="stage" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip formatter={(v: number) => [v, 'Count']} />
+                  <Tooltip formatter={(v) => [v, 'Count']} />
                   <Bar dataKey="count" radius={[4,4,0,0]}>
                     {pipelineChart.map(d => <Cell key={d.stage} fill={STAGE_COLORS[d.stage] || '#7450d7'} />)}
                   </Bar>
