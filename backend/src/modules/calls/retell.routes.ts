@@ -45,7 +45,7 @@ retellRouter.post('/llm', async (req: Request, res: Response) => {
     }
 
     const { call, response_id, messages } = body
-    const orgId = call?.metadata?.orgId || process.env.DEFAULT_ORG_ID || ''
+    const orgId = (req.query?.orgId as string) || call?.metadata?.orgId || process.env.DEFAULT_ORG_ID || ''
     const callId = call?.call_id || uuidv4()
 
     logger.info({ callId, orgId, response_id }, '[Retell] LLM request received')
