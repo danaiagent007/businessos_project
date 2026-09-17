@@ -23,17 +23,11 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
     const orgId = url.searchParams.get('orgId') || ''
     logger.info({ orgId }, '[Retell WS] Custom LLM connection opened')
 
-    let systemPrompt = 'You are a helpful AI voice assistant for a business. Keep responses short and conversational (1-2 sentences).'
-    if (orgId) {
+    let systemPrompt = buildSystemPrompt('')
+    if (orgId && orgId !== 'unknown') {
       try {
-        const kbText = await kbService.getKnowledgeBaseText(orgId)
-        if (kbText) {
-          systemPrompt = `You are a helpful AI voice assistant for a business.
-Keep responses short and conversational (1-2 sentences) for a voice interface.
-Use the following knowledge base to answer questions:
-
-${kbText}`
-        }
+        const kbText = await kbService(orgId).buildContext()
+        systemPrompt = buildSystemPrompt(kbText)
       } catch (e) {
         logger.error({ err: e }, '[Retell WS] Failed to load KB')
       }
@@ -199,4 +193,20 @@ ${kbText}`
   })
 
   logger.info('[Retell WS] WebSocket Custom LLM attached at /api/retell/llm-ws')
+}
+
+function buildSystemPrompt(kbContext: string): string {
+  const kb = kbContext
+    ? `\n\nBusiness Knowledge Base:\n${kbContext}`
+    : ''
+
+  return `You are a friendly AI voice assistant for a business. You are on a phone call.
+  
+Rules:
+- Keep responses SHORT (1-2 sentences max) — this is a VOICE call, not text
+- Be warm, natural, conversational — avoid bullet points or lists
+- If asked about prices/services, use the knowledge base below
+- If you don't know something, say "Let me connect you with our team"
+- Never make up prices or services
+- Speak naturally as if you're a helpful receptionist${kb}`
 }
