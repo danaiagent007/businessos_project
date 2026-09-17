@@ -4,6 +4,7 @@ import cors from 'cors'
 import { createServer } from 'http'
 import { clerkMiddleware } from '@clerk/express'
 import pinoHttp from 'pino-http'
+import mongoose from 'mongoose'
 import { config } from './config/index.js'
 import { logger } from './common/logger.js'
 import { tenantMiddleware } from './common/middleware/tenant.js'
@@ -51,9 +52,15 @@ app.use(notFound)
 app.use(errorHandler)
 
 // ─── Start ───────────────────────────────────────────────────────────────────
-httpServer.listen(config.port, () => {
-  logger.info(`🚀 Backend running on http://localhost:${config.port}`)
-  logger.info(`   Environment: ${config.nodeEnv}`)
+mongoose.connect(config.mongodb.uri).then(() => {
+  logger.info('📦 Connected to MongoDB')
+  httpServer.listen(config.port, () => {
+    logger.info(`🚀 Backend running on http://localhost:${config.port}`)
+    logger.info(`   Environment: ${config.nodeEnv}`)
+  })
+}).catch((err) => {
+  logger.error({ err }, 'Failed to connect to MongoDB')
+  process.exit(1)
 })
 
 // Graceful shutdown
