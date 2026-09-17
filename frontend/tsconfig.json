@@ -16,7 +16,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@business-os/shared": ["../shared/src/index.ts"]
     }
   },
   "include": ["src"],
