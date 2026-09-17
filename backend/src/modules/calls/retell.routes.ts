@@ -93,7 +93,7 @@ retellRouter.post('/llm', async (req: Request, res: Response) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
+        model: 'llama-3.1-8b-instant',
         messages: groqMessages,
         max_tokens: 120,     // keep replies short for voice
         temperature: 0.5,

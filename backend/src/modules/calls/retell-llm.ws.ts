@@ -78,7 +78,7 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'openai/gpt-oss-120b',
+              model: 'llama-3.1-8b-instant',
               messages: groqMessages,
               max_tokens: 120,
               temperature: 0.5,
@@ -87,6 +87,8 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
           })
 
           if (!groqRes.ok || !groqRes.body) {
+            const errBody = await groqRes.text().catch(() => 'no body')
+            logger.error({ status: groqRes.status, errBody }, '[Retell WS] Groq streaming error')
             ws.send(JSON.stringify({
               response_id: responseId,
               content: "I apologize, I'm having a technical issue.",

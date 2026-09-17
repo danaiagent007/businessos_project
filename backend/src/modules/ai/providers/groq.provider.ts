@@ -7,9 +7,9 @@ import type { AIProvider, CompletionOptions } from '../ai.provider.js'
  * Use standard model names from https://console.groq.com/docs/models
  */
 const MODELS = [
-  'openai/gpt-oss-120b',       // Valid model for this specific key
+  'llama-3.1-8b-instant',      // Widely available, fast
   'llama3-70b-8192',           // 70B — widely available on all keys
-  'llama-3.1-8b-instant',      // 8B — ultra-fast, always available
+  'llama-3.3-70b-versatile',   // New 70B model
   'mixtral-8x7b-32768',        // 8×7B — 32k context
   'gemma2-9b-it',              // 9B — Google's model via Groq
   'llama3-8b-8192',            // 8B — stable fallback
