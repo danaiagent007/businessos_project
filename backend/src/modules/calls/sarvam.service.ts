@@ -55,14 +55,47 @@ export async function speechToText(
 
 // ─── Text → Speech ───────────────────────────────────────────────────────────
 
+// All valid speakers for bulbul:v3
 export type SarvamSpeaker =
-  | 'anushka'   // Female, Indian English
-  | 'manisha'   // Female, Hindi
-  | 'vidya'     // Female, South Indian
-  | 'arya'      // Female, neutral
-  | 'abhilash'  // Male
-  | 'karun'     // Male
-  | 'hitesh'    // Male
+  | 'priya'    // Female
+  | 'neha'     // Female
+  | 'simran'   // Female
+  | 'kavya'    // Female
+  | 'ishita'   // Female
+  | 'shreya'   // Female
+  | 'pooja'    // Female
+  | 'ritu'     // Female
+  | 'tanya'    // Female
+  | 'shruti'   // Female
+  | 'suhani'   // Female
+  | 'kavitha'  // Female (South Indian)
+  | 'rahul'    // Male
+  | 'aditya'   // Male
+  | 'rohan'    // Male
+  | 'amit'     // Male
+  | 'dev'      // Male
+  | 'ratan'    // Male
+  | 'varun'    // Male
+  | 'kabir'    // Male
+  | 'vijay'    // Male (South Indian)
+  | 'gokul'    // Male (South Indian)
+  | 'ashutosh' // Male
+  | 'rahul'    // Male
+  | 'soham'    // Male
+  | 'mohit'    // Male
+  | 'rehan'    // Male
+  | 'sunny'    // Male
+  | 'mani'     // Male
+  | 'tarun'    // Male
+  | 'anand'    // Male
+  | 'advait'   // Male
+  | 'shubh'    // Male
+  | 'aayan'    // Male
+  | 'manan'    // Male
+  | 'sumit'    // Male
+  | 'roopa'    // Female
+  | 'rupali'   // Female
+  | 'kabir'    // Male
 
 export interface TTSResult {
   /** Base64-encoded WAV audio */
@@ -78,7 +111,7 @@ export interface TTSResult {
 export async function textToSpeech(
   text: string,
   languageCode = 'en-IN',
-  speaker: SarvamSpeaker = 'anushka'
+  speaker: SarvamSpeaker = 'priya'
 ): Promise<TTSResult> {
   const res = await fetch(`${SARVAM_BASE}/text-to-speech`, {
     method: 'POST',
