@@ -1,7 +1,7 @@
 {
-  "buildCommand": "pnpm --filter frontend build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "pnpm install",
+  "installCommand": "cd .. && pnpm install",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
