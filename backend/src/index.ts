@@ -64,6 +64,11 @@ mongoose.connect(config.mongodb.uri).then(() => {
   logger.info('📦 Connected to MongoDB')
   attachVoiceWebSocket(httpServer)
   attachRetellLLMWebSocket(httpServer)
+  
+  httpServer.on('upgrade', (req, socket) => {
+    logger.info({ url: req.url, headers: req.headers }, '[Upgrade Debug] Received upgrade request')
+  })
+
   httpServer.listen(config.port, () => {
     logger.info(`🚀 Backend running on http://localhost:${config.port}`)
     logger.info(`   Environment: ${config.nodeEnv}`)

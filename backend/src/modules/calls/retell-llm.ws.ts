@@ -98,18 +98,22 @@ export function attachRetellLLMWebSocket(httpServer: Server): void {
           const reader = groqRes.body.getReader()
           const decoder = new TextDecoder('utf-8')
           let fullAiReply = ''
+          let buffer = ''
 
           while (true) {
             const { value, done } = await reader.read()
             if (done) break
             
-            const chunkStr = decoder.decode(value, { stream: true })
-            const lines = chunkStr.split('\n')
+            buffer += decoder.decode(value, { stream: true })
+            const lines = buffer.split('\n')
+            // keep the last incomplete line in the buffer
+            buffer = lines.pop() || ''
             
             for (const line of lines) {
-              if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+              const trimmed = line.trim()
+              if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
                 try {
-                  const data = JSON.parse(line.slice(6))
+                  const data = JSON.parse(trimmed.slice(6))
                   const text = data.choices[0]?.delta?.content
                   if (text) {
                     fullAiReply += text
